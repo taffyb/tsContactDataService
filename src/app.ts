@@ -2,7 +2,8 @@ import express from 'express';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
 import {Neo4jSvc} from './classes/Neo4jSvc';
-import * as userRoutes from './routes/users';
+import * as entityDefRoutes from './routes/entityDefs';
+import * as entityRoutes from './routes/entities';
 import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
@@ -19,7 +20,8 @@ app.get( '/', ( req: any, res: any ) => {
 } );
 
 // REGISTER OUR ROUTES -------------------------------
-userRoutes.register(app);
+entityDefRoutes.register(app);
+entityRoutes.register(app);
 
 // start the Express server
 app.listen( port, () => {

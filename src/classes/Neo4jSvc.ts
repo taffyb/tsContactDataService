@@ -64,7 +64,7 @@ export class Neo4jSvc {
                 cypher = query;
             }
             if (debug) {
-                console.log(`***executeCypher***\nQueryName: ${query.endsWith('.cyp') ? query : ''}\nCypher:\n${cypher}\nParams:\n${JSON.stringify(myParams)}`);
+                console.log(`***executeCypher***\nQueryName: ${query.endsWith('.cyp') ? query : ''}\nCypher:\n${cypher}\n:param ${JSON.stringify(myParams)}`);
             }
             session
             .run(cypher, myParams)
@@ -102,6 +102,8 @@ export class Neo4jSvc {
                 cleanResult[key] = me.clean(me, record.get(key).properties);
             } else if (Array.isArray(record.get(key))) {
                 cleanResult[key] = me.clean(me, record.get(key));
+            } else if (me.isObject(record.get(key))) {
+                cleanResult[key] = me.clean(me, record.get(key));
             } else {
                 cleanResult[key] = record.get(key);
             }
@@ -110,29 +112,55 @@ export class Neo4jSvc {
     }
 
     private clean(me: Neo4jSvc, obj: any): any {
+        console.log(`**** clean ****`);
         let rtn: any;
         if (Array.isArray(obj)) {
             rtn = [];
             obj.forEach((o) => {
                rtn.push( me.clean(me, o));
             });
-        } else {
-            if (obj.properties) {
+        } else if (obj.properties) {
                 rtn = {};
                 for (const p in obj.properties) {
                     if (me.isObject(obj.properties[p])) {
-                        if (me.isNeo4jNumber(obj.properties[p])) {
-                            rtn[p] = Neo4j.integer.toNumber(obj.properties[p]);
+                        console.log(`${p}: ${JSON.stringify(obj.properties[p])}`);
+                        const o: any = obj.properties[p];
+                        if (me.isNeo4jNumber(o)) {
+                            rtn[p] = Neo4j.integer.toNumber(o);
+                        } else if (o.properties) {
+                            console.log(`more properties ... ${JSON.stringify(o)}`);
+                            rtn[p] = me.clean(me, o);
                         } else {
-                            rtn[p] = obj.properties[p];
+                            rtn[p] = o;
                         }
                     } else {
                         rtn[p] = obj.properties[p];
                     }
                 }
+         } else {
+            if (me.isObject(obj)) {
+                rtn = {};
+                console.log(`obj is an Object keys:${JSON.stringify(Object.keys(obj))} length ${Object.keys(obj).length}`);
+                for (let k = 0; k < Object.keys(obj).length; k++) {
+                    const key = Object.keys(obj)[k];
+                    const o: any = obj[key];
+                    console.log(`obj[${key}] : ${JSON.stringify(o)}`);
+                    if (me.isNeo4jNumber(o)) {
+                        rtn[key] = Neo4j.integer.toNumber(o);
+                    } else if (o.properties) {
+                        console.log(`more properties ... ${JSON.stringify(o)}`);
+                        rtn[key] = me.clean(me, o);
+                    } else if (me.isObject(o)) {
+                        rtn[key] = me.clean(me, o);
+                    } else {
+                        rtn[key] = o;
+                    }
+                }
             } else {
+                console.log(`obj not an Object ${obj}`);
                 rtn = obj;
             }
+
         }
         return rtn;
     }
