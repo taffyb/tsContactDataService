@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Spite-Malice-Server</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<variableList>
+		<variable>
+			<name>SPITE_MALICE_LIB</name>
+			<value>file:/D:/git_repo/Spite-Malice-lib/src</value>
+		</variable>
+	</variableList>
+</projectDescription>

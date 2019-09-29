@@ -1,0 +1,6 @@
+CREATE (:Test{message:"Hello World"})
+CREATE (:Test{message:"New World"})
+CREATE (u1:User{name:"Taffy"})
+SET u1.uuid=apoc.create.uuid()
+CREATE (u2:User{name:"Suzannah"})
+SET u2.uuid=apoc.create.uuid()
