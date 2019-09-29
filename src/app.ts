@@ -3,8 +3,6 @@ import logger from 'morgan';
 import bodyParser from 'body-parser';
 import {Neo4jSvc} from './classes/Neo4jSvc';
 import * as userRoutes from './routes/users';
-import * as gameRoutes from './routes/games';
-import * as moveRoutes from './routes/moves';
 import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
@@ -22,8 +20,6 @@ app.get( '/', ( req: any, res: any ) => {
 
 // REGISTER OUR ROUTES -------------------------------
 userRoutes.register(app);
-gameRoutes.register(app);
-moveRoutes.register(app);
 
 // start the Express server
 app.listen( port, () => {
