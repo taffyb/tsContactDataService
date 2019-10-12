@@ -7,12 +7,12 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
         const eduuid = req.params.eduuid;
         const results = await neo4jSvc.executeCypher('getEntityDef.cyp', {eduuid: eduuid});
 
-        res.send( results[0] );
+        res.send( results[0].entityDef );
     });
     app.get( prefix + '/entity-defs', async ( req: any, res ) => {
         const results = await neo4jSvc.executeCypher('getEntityDefs.cyp', {});
 
-        res.send( results[0] );
+        res.send( results[0].entityDefs );
     });
     app.post( prefix + '/entity-defs', async ( req: any, res ) => {
         const params = req.body;
