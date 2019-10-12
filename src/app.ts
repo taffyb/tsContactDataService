@@ -13,12 +13,18 @@ const port = process.env.SVR_PORT; // default port to listen
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json({limit: '50mb', type: 'application/json'}));
+app.disable('etag');
 
 // define a route handler for the default home page
 app.get( '/', ( req: any, res: any ) => {
     res.send( 'Hello world!.' );
 } );
-
+app.use((req, res, next) => {
+    res.append('Access-Control-Allow-Origin', ['*']);
+    res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.append('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
 // REGISTER OUR ROUTES -------------------------------
 entityDefRoutes.register(app);
 entityRoutes.register(app);

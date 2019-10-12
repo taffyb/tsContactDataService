@@ -1,6 +1,7 @@
 //{eduuid:}
 
-MATCH (ed:EntityDef{uuid:$eduuid})
-MATCH (ed)-[:HAS_A]->(p:Property)-[:OF]->(pt:PropertyType)
-WITH ed,p,pt
-RETURN {name:ed.name,props:collect({name:p.name,type:pt})} as entityDef
+MATCH (ed:EntityDef{uuid:$eduuid})-[:HAS_A]->(p:Property)-[:OF]->(pt:PropertyType)  
+WITH ed, apoc.map.merge(p,pt) as prop
+ORDER BY prop.order
+WITH ed,collect(prop) as props
+RETURN {name:ed.name,uuid:ed.uuid,props:props} as entityDef

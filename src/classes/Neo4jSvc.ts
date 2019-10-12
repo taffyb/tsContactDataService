@@ -112,7 +112,7 @@ export class Neo4jSvc {
     }
 
     private clean(me: Neo4jSvc, obj: any): any {
-        console.log(`**** clean ****`);
+//        console.log(`**** clean ****`);
         let rtn: any;
         if (Array.isArray(obj)) {
             rtn = [];
@@ -123,12 +123,12 @@ export class Neo4jSvc {
                 rtn = {};
                 for (const p in obj.properties) {
                     if (me.isObject(obj.properties[p])) {
-                        console.log(`${p}: ${JSON.stringify(obj.properties[p])}`);
+//                        console.log(`${p}: ${JSON.stringify(obj.properties[p])}`);
                         const o: any = obj.properties[p];
                         if (me.isNeo4jNumber(o)) {
                             rtn[p] = Neo4j.integer.toNumber(o);
                         } else if (o.properties) {
-                            console.log(`more properties ... ${JSON.stringify(o)}`);
+//                            console.log(`more properties ... ${JSON.stringify(o)}`);
                             rtn[p] = me.clean(me, o);
                         } else {
                             rtn[p] = o;
@@ -140,15 +140,14 @@ export class Neo4jSvc {
          } else {
             if (me.isObject(obj)) {
                 rtn = {};
-                console.log(`obj is an Object keys:${JSON.stringify(Object.keys(obj))} length ${Object.keys(obj).length}`);
+//                console.log(`obj is an Object keys:${JSON.stringify(Object.keys(obj))} length ${Object.keys(obj).length}`);
                 for (let k = 0; k < Object.keys(obj).length; k++) {
                     const key = Object.keys(obj)[k];
                     const o: any = obj[key];
-                    console.log(`obj[${key}] : ${JSON.stringify(o)}`);
                     if (me.isNeo4jNumber(o)) {
                         rtn[key] = Neo4j.integer.toNumber(o);
                     } else if (o.properties) {
-                        console.log(`more properties ... ${JSON.stringify(o)}`);
+//                        console.log(`more properties ... ${JSON.stringify(o)}`);
                         rtn[key] = me.clean(me, o);
                     } else if (me.isObject(o)) {
                         rtn[key] = me.clean(me, o);
@@ -157,7 +156,7 @@ export class Neo4jSvc {
                     }
                 }
             } else {
-                console.log(`obj not an Object ${obj}`);
+//                console.log(`obj not an Object ${obj}`);
                 rtn = obj;
             }
 
@@ -174,6 +173,6 @@ export class Neo4jSvc {
     }
 
     isNeo4jNumber(obj: any): boolean {
-        return obj.low && obj.high;
+        return obj.hasOwnProperty('low') && obj.hasOwnProperty('high');
     }
 }

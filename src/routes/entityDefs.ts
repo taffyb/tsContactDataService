@@ -5,7 +5,7 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
     const neo4jSvc = Neo4jSvc.getInstance();
     app.get( prefix + '/entity-defs/:eduuid', async ( req: any, res ) => {
         const eduuid = req.params.eduuid;
-        const results = await neo4jSvc.executeCypher('getEntityDef.cyp', {eduuid: eduuid}, true);
+        const results = await neo4jSvc.executeCypher('getEntityDef.cyp', {eduuid: eduuid});
 
         res.send( results[0] );
     });

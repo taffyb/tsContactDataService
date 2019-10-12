@@ -6,7 +6,16 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
     app.get( prefix + '/entities/:euuid', async ( req: any, res ) => {
         const euuid = req.params.euuid;
         const results = await neo4jSvc.executeCypher('getEntity.cyp', {euuid: euuid});
-        const entity = results[0].entity;
+        const e = results[0].entity;
+        const entity: any = {};
+        entity.type = e.type;
+        entity.uuid = e.uuid;
+        entity.props = [];
+        for (const prop in e.props) {
+            if (prop !== 'uuid') {
+                entity.props.push({name: prop, value: e.props[prop]});
+            }
+        }
         res.send( entity );
     });
     app.get( prefix + '/entities', async ( req: any, res ) => {
