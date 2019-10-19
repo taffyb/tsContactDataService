@@ -9,6 +9,7 @@ CREATE CONSTRAINT ON (pt:PropertyType)
 CREATE (:Test{message:"Hello World"})
 CREATE (:Test{message:"New World"})
 
+CREATE INDEX ON :Entity(uuid)
 
 MERGE (ed1:EntityDef{name:"Person"})
 ON CREATE SET ed1.uuid=apoc.create.uuid()
@@ -42,7 +43,9 @@ MERGE (ed2)-[:HAS_A]->(p2c:Property{name:"Notes"})-[:OF]->(memo)
 SET p2c.order=toInteger(3)
 MERGE (ed3)-[:HAS_A]->(p3a:Property{name:"Name"})-[:OF]->(string)
 SET p3a.order=toInteger(1),p3a.required=true
-MERGE (ed3)-[:HAS_A]->(p3b:Property{name:"Date"})-[:OF]->(date)
-SET p3b.order=toInteger(2)
-MERGE (ed3)-[:HAS_A]->(p3c:Property{name:"Description"})-[:OF]->(memo)
-SET p3c.order=toInteger(3)
+MERGE (ed3)-[:HAS_A]->(p3b:Property{name:"sdate"})-[:OF]->(date)
+SET p3b.order=toInteger(2),p3b.label="Start Date"
+MERGE (ed3)-[:HAS_A]->(p3c:Property{name:"edate"})-[:OF]->(date)
+SET p3c.order=toInteger(3),p3c.label="End Date"
+MERGE (ed3)-[:HAS_A]->(p3d:Property{name:"Description"})-[:OF]->(memo)
+SET p3c.order=toInteger(4)
