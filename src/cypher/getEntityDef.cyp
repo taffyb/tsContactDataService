@@ -4,4 +4,4 @@ MATCH (ed:EntityDef{uuid:$eduuid})-[:HAS_A]->(p:Property)-[:OF]->(pt:PropertyTyp
 WITH ed, apoc.map.merge(p,pt) as prop
 ORDER BY prop.order
 WITH ed,collect(prop) as props
-RETURN {name:ed.name,uuid:ed.uuid,props:props} as entityDef
+RETURN {name:ed.name,uuid:ed.uuid,display:ed.display,props:props} as entityDef

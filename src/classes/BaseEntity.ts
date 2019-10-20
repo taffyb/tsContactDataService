@@ -4,6 +4,7 @@ import {IProp} from './IProp';
 export class BaseEntity implements IEntity {
     type: string;
     uuid: string;
+    display: string;
     props: IProp[];
 
     static fromMap(e: any): IEntity {
@@ -11,6 +12,7 @@ export class BaseEntity implements IEntity {
         const entity: BaseEntity = new BaseEntity();
         entity.type = e.type;
         entity.uuid = e.uuid;
+        entity.display = e.display;
         entity.props = [];
 
         let key: string;
