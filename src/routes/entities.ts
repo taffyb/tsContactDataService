@@ -17,7 +17,12 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
         const results = await neo4jSvc.executeCypher('getEntities.cyp', {});
         const entities: BaseEntity[] = [];
 
-        results[0].entities.forEach(async (e: any, i: any) => {
+
+
+         /*
+          * for each entity in the result determin add a display string
+         */
+            results[0].entities.forEach(async (e: any, i: any) => {
             const entity: BaseEntity = new BaseEntity();
             entity.type = e.type;
             entity.uuid = e.uuid;

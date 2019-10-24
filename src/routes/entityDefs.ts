@@ -10,7 +10,7 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
         res.send( results[0].entityDef );
     });
     app.get( prefix + '/entity-defs', async ( req: any, res ) => {
-        const results = await neo4jSvc.executeCypher('getEntityDefs.cyp', {});
+        const results = await neo4jSvc.executeCypher('getEntityDefs.cyp', {}, true);
 
         res.send( results[0].entityDefs );
     });
