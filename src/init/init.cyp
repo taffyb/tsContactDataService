@@ -76,6 +76,6 @@ SET p3b.order=toInteger(2),p3b.label="Start Date"
 MERGE (g3a)-[:HAS_A]->(p3c:Property{name:"edate"})-[:OF]->(date)
 SET p3c.order=toInteger(3),p3c.label="End Date"
 MERGE (g3a)-[:HAS_A]->(p3d:Property{name:"Description"})-[:OF]->(memo)
-SET p3c.order=toInteger(4)
+SET p3d.order=toInteger(4)
 
 RETURN *
