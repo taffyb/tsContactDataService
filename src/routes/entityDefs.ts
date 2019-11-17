@@ -9,6 +9,12 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
 
         res.send( results[0].entityDef );
     });
+    app.delete( prefix + '/entity-defs/:uuid', async ( req: any, res ) => {
+        const uuid = req.params.uuid;
+        const results = await neo4jSvc.executeCypher('deleteEntityDef.cyp', {uuid: uuid});
+
+        res.send( results[0] );
+    });
     app.get( prefix + '/entity-defs', async ( req: any, res ) => {
         const results = await neo4jSvc.executeCypher('getEntityDefs.cyp', {});
 

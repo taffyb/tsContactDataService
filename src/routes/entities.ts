@@ -16,9 +16,6 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
     app.get( prefix + '/entities', async ( req: any, res ) => {
         const results = await neo4jSvc.executeCypher('getEntities.cyp', {});
         const entities: BaseEntity[] = [];
-
-
-
          /*
           * for each entity in the result determin add a display string
          */
@@ -41,53 +38,30 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
             }
             entities.push(entity);
             if (i === results[0].entities.length - 1) {
-//              console.log(`entities: ${JSON.stringify(entities)}`);
               res.send( entities );
             }
         });
 
     });
     app.post( prefix + '/entities', async ( req: any, res ) => {
-       /**
-        * entity arives as map need to convert it to structure expected by the cypher
-        */
+
         const e = req.body;
-        const entity: BaseEntity = BaseEntity.fromMap(e);
-//        entity.type = e.type;
-//        entity.props = [];
-//
-//        let key: string;
-//        for (key in e) {
-//            if (!(key === 'uuid' || key === 'type') ) {
-//                const value: string = e[key];
-//                if (value.length > 0) {
-//                    entity.props.push({key: key, value: value});
-//                }
-//            }
-//        }
 
-
-        console.log(`entity: ${JSON.stringify(entity)}`);
-        const results = await neo4jSvc.executeCypher('addEntity.cyp', entity);
+        const results = await neo4jSvc.executeCypher('addEntity.cyp', e);
 
         res.send( results[0].entity.uuid );
     });
     app.put( prefix + '/entities/:euuid', async ( req: any, res ) => {
-        const euuid = req.params.euuid;
         const e = req.body;
-        const entity: BaseEntity = BaseEntity.fromMap(e);
-//        console.log(`entity: ${JSON.stringify(entity)}`);
-        const results = await neo4jSvc.executeCypher('updateEntity.cyp', entity);
+        const results = await neo4jSvc.executeCypher('updateEntity.cyp', e);
 
-        res.send( results[0] );
-//        res.sendStatus(200);
+        res.send( results[0].entity );
     });
-    app.delete( prefix + '/entities/:euuid', async ( req: any, res ) => {
-        const euuid = req.params.euuid;
-        const results = await neo4jSvc.executeCypher('deleteEntity.cyp', {euuid: euuid});
+    app.delete( prefix + '/entities/:uuid', async ( req: any, res ) => {
+        const uuid = req.params.uuid;
+        const results = await neo4jSvc.executeCypher('deleteEntity.cyp', {uuid: uuid});
 
         res.send( results[0] );
     });
 };
 
-// function

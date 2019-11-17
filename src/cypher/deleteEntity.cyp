@@ -1,4 +1,4 @@
-//{"euuid":""}
+//{"uuid":""}
 
-MATCH (e:Entity{uuid:$euuid})
+MATCH (e:Entity{uuid:$uuid})
 DETACH DELETE e
