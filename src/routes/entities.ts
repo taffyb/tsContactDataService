@@ -7,9 +7,9 @@ import {EntityDefSvc} from '../classes/EntityDefSvc';
 
 export const register = ( app: express.Application, prefix: string= '/api' ) => {
     const neo4jSvc = Neo4jSvc.getInstance();
-    app.get( prefix + '/entities/:euuid', async ( req: any, res ) => {
-        const euuid = req.params.euuid;
-        const results = await neo4jSvc.executeCypher('getEntity.cyp', {euuid: euuid});
+    app.get( prefix + '/entities/:uuid', async ( req: any, res ) => {
+        const uuid = req.params.uuid;
+        const results = await neo4jSvc.executeCypher('getEntity.cyp', {uuid: uuid});
         const e = results[0].entity;
         res.send( e );
     });
@@ -44,14 +44,11 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
 
     });
     app.post( prefix + '/entities', async ( req: any, res ) => {
-
-        const e = req.body;
-
+        const e: IEntity = req.body;
         const results = await neo4jSvc.executeCypher('addEntity.cyp', e);
-
         res.send( results[0].entity.uuid );
     });
-    app.put( prefix + '/entities/:euuid', async ( req: any, res ) => {
+    app.put( prefix + '/entities/:uuid', async ( req: any, res ) => {
         const e = req.body;
         const results = await neo4jSvc.executeCypher('updateEntity.cyp', e);
 

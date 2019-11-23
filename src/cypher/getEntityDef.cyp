@@ -1,6 +1,6 @@
-//{eduuid:}
+//{uuid:}
 
-MATCH (ed:EntityDef{uuid:$eduuid})
+MATCH (ed:EntityDef{uuid:$uuid})
 MATCH (ed)-[:HAS_A]->(g:Group)-[:HAS_A]->(p:Property)-[:OF]->(pt:PropertyType)  
 WITH ed,g,apoc.map.merge(p,pt) as prop
 ORDER BY g.order, prop.order

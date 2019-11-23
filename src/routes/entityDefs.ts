@@ -3,9 +3,9 @@ import {Neo4jSvc} from '../classes/Neo4jSvc';
 
 export const register = ( app: express.Application, prefix: string= '/api' ) => {
     const neo4jSvc = Neo4jSvc.getInstance();
-    app.get( prefix + '/entity-defs/:eduuid', async ( req: any, res ) => {
-        const eduuid = req.params.eduuid;
-        const results = await neo4jSvc.executeCypher('getEntityDef.cyp', {eduuid: eduuid});
+    app.get( prefix + '/entity-defs/:uuid', async ( req: any, res ) => {
+        const uuid = req.params.uuid;
+        const results = await neo4jSvc.executeCypher('getEntityDef.cyp', {uuid: uuid});
 
         res.send( results[0].entityDef );
     });

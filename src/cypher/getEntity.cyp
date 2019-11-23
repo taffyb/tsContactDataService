@@ -1,6 +1,6 @@
-// {euuid:"4a746383-2b88-4614-97c0-08964e40b919"}
+// {uuid:"4a746383-2b88-4614-97c0-08964e40b919"}
 
-MATCH (e:Entity{uuid:$euuid})
+MATCH (e:Entity{uuid:$uuid})
 
 WITH e,properties(e) as props,filter(l IN labels(e) WHERE l <> 'Entity') as type
 

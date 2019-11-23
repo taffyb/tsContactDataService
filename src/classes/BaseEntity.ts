@@ -26,4 +26,15 @@ export class BaseEntity implements IEntity {
         }
         return entity;
     }
+    static fromArrays(entityType: string, keys: string[], values: string[]): IEntity {
+        const e = new BaseEntity();
+        e.type = entityType;
+        e.props = [];
+
+        keys.forEach((key, i) => {
+            e.props.push({key: key, value: values[i]});
+        });
+
+        return e;
+    }
 }
