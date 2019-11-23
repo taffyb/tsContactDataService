@@ -32,89 +32,22 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
         res.contentType('application/vnd.ms-excel');
         res.send(entityHeader + '\n' + groupHeader + '\n' + propHeader);
     });
-//    app.post( prefix + '/template', async ( req: any, res ) => {
-//        const UUID = 0;
-//        const TABS = 1;
-//        const KEYS = 2;
-//        const file = req.files.file;
-//        let cypRes;
-//        const results: Promise<String>[] = [];
-//
-//        if (file.name.endsWith('.csv')) {
-//            const buf = new Buffer(file.data);
-//
-//            const rows = buf.toString().split('\n');
-//            const type = rows[UUID].split(',')[0];
-//            console.log(`POST /template rows[${rows.length}]`);
-//
-//            // check that the uuid in the uploaded template matches an Entity Definition for the filename
-//            cypRes = await neo4jSvc.executeCypher('entityDefExists.cyp', {uuid: rows[UUID].split(',')[1],
-//                                                                         entityDefType: type});
-//
-//            console.log(`POST /template EntityDef Exists :${cypRes[0].exists}`);
-//
-//            if (cypRes[0].exists) {
-//                // ignore the 2 header rows
-//                // split the 3rd row into an array of keys
-//                const keys = rows[KEYS].split(',');
-//                let entity: IEntity;
-//                let values: string[];
-//
-//                // for each row create a new BaseEntity
-//                for (let rowId = KEYS + 1; rowId < rows.length; rowId++) {
-//                    if (rows[rowId].length > 0) {
-//                        values = rows[rowId].split(',');
-//                        entity = new BaseEntity;
-//                        entity.type = type;
-//                        entity.props = [];
-//                        console.log(`row[${rowId}]\n${rows[rowId]}\n${JSON.stringify(values)}`);
-//                        for (let i = 0; i < keys.length; i++) {
-//                            entity.props.push({key: keys[i], value: values[i]});
-//                        }
-//                        console.log(`POST /template entity[${rowId}] ${JSON.stringify(entity)}`);
-//                        results.push(
-//                           new Promise((resolve, reject) => {
-//                               neo4jSvc.executeCypher('addEntity.cyp', entity)
-//                                   .then((e) => {
-//                                       resolve(`row ${rowId}: ${JSON.stringify(e)}`);
-//                                   })
-//                                   .catch((err) => {
-//                                       resolve(`row x:${err}`);
-//                                   });
-//                              })
-//                        );
-//                    }
-//                }
-//
-//              Promise.all(results)
-//                  .then(val => {
-//                      res.send(`POST /template results:${JSON.stringify(val)}`);
-//                  })
-//                  .catch(err => {
-//                      console.log(`POST /template ERROR:${err}`);
-//                      res.sendStatus(500);
-//                  });
-//
-//            } else {
-//                res.sendStatus(500);
-//            }
-//        } else {
-//            res.sendStatus(500);
-//        }
-//
-//    });
-    app.post( prefix + '/template', async ( req: any, res ) => {
+    app.post( prefix + '/template',  ( req: any, res ) => {
+        const UUID = 0;
         const file = req.files.file;
         parse(file.data, {
                 delimiter: ',',
                 trim: true,
                 skip_empty_lines: true
-                }, function(err: Error, records: any[]) {
+                }, async function(err: Error, records: any[]) {
             if (err) {
                 res.send(err);
             } else {
-                // If EntityTypeDef exists
-                const entities: IEntity[] = recordsToEntityArr(records);
+                const record: string = records[UUID];
+                const defType = record[0];
+                const uuid = record[1];
+                const keys: string[] = await getEntityTypeKeys(defType, uuid);
+                const entities: IEntity[] = recordsToEntityArr(defType, records, keys);
                 console.log(`entities:${JSON.stringify(entities)}`);
                 Promise.all(addEntities(entities))
                 .then(val => {
@@ -129,13 +62,34 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
         });
     });
 };
+async function getEntityTypeKeys(defType: string, uuid: string): Promise<string[]> {
+    const neo4jSvc = Neo4jSvc.getInstance();
+    let results;
+    const params = {
+                    entityDefType: defType,
+                    uuid: uuid
+                   };
+    results = await neo4jSvc.executeCypher('entityDefExists.cyp', params);
+    if (results[0].exists) {
+        results = await neo4jSvc.executeCypher('getEntityDef.cyp', {uuid: uuid});
+        const entityDef: IEntityDef = results[0].entityDef;
+        const typeKeys: string[] = [];
+        entityDef.groups.forEach(g => {
+            g.props.forEach(p => {
+                typeKeys.push(p.name);
+            });
+        });
+        return new Promise<string[]>((resolve, reject) => {resolve(typeKeys); });
 
-function recordsToEntityArr(records: any[]): IEntity[] {
-    const UUID = 0;
+    } else {
+        return new Promise<string[]>((resolve, reject) => {reject([]); });
+    }
+
+}
+
+function recordsToEntityArr(entityType: string, records: string[], keys: string[]): IEntity[] {
     const TABS = 1;
     const KEYS = 2;
-    const keys: string[] = records[KEYS];
-    const entityType: string = records[UUID][0];
     const entities: IEntity[] = [];
 
     records.forEach((row, rowId) => {
