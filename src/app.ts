@@ -6,6 +6,7 @@ import {Neo4jSvc} from './classes/Neo4jSvc';
 import * as entityDefRoutes from './routes/entityDefs';
 import * as entityRoutes from './routes/entities';
 import * as utilityRoutes from './routes/utilities';
+import * as relationshipRoutes from './routes/relationships';
 import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
@@ -34,6 +35,7 @@ app.use((req, res, next) => {
 entityDefRoutes.register(app);
 entityRoutes.register(app);
 utilityRoutes.register(app);
+relationshipRoutes.register(app);
 
 // start the Express server
 app.listen( port, () => {
