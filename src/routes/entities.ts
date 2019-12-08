@@ -9,9 +9,12 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
     const neo4jSvc = Neo4jSvc.getInstance();
     app.get( prefix + '/entities/:uuid', async ( req: any, res ) => {
         const uuid = req.params.uuid;
-        const results = await neo4jSvc.executeCypher('getEntity.cyp', {uuid: uuid});
-        const e = results[0].entity;
-        res.send( e );
+        console.log(`GET ${prefix}/entities/:uuid = ${uuid}`);
+        const results = await neo4jSvc.executeCypher('getEntity.cyp', {uuid: uuid}, true);
+        const entity = results[0].entity;
+        entity.display = await EntityDefSvc.getDisplayString(entity.type, entity.props);
+
+        res.send( entity );
     });
     app.get( prefix + '/entities', async ( req: any, res ) => {
         const results = await neo4jSvc.executeCypher('getEntities.cyp', {});

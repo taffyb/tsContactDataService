@@ -27,5 +27,14 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
             .catch(err => {console.log(`GET ${prefix}/relationships ${JSON.stringify(err)}`); res.sendStatus(500); });
         }
     });
+    app.get( prefix + '/relationships/:uuid/:source/:target', ( req: any, res ) => {
+        const uuid: string = req.params.uuid;
+        const source: string = req.params.source;
+        const target: string = req.params.target;
+    neo4jSvc.executeCypher('getRelationship.cyp', {source: source, target: target, uuid: uuid}, true)
+    .then(result => { res.send(result[0].label); })
+    .catch(err => {console.log(`GET ${prefix}/relationships ${JSON.stringify(err)}`); res.sendStatus(500); });
+
+    });
 };
 
