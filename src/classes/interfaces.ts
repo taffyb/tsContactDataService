@@ -14,15 +14,8 @@ export interface IEntity {
     uuid: string;
     display: string;
     icon?: string;
-    props: IProp[];
+    props?: IProp[];
 }
-export interface IEntityLite {
-    type: string;
-    uuid: string;
-    display: string;
-    icon?: string;
-}
-
 export interface IEntityDef {
     name: string;
     uuid: string;

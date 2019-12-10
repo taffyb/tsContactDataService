@@ -1,6 +1,6 @@
 import * as express from 'express';
 import {Neo4jSvc} from '../classes/Neo4jSvc';
-import {BaseEntity} from '../classes/BaseEntity';
+import {BaseLiteEntity} from '../classes/BaseLiteEntity';
 import {IEntity, IEntityDef} from '../classes/interfaces';
 import {EntityDefSvc} from '../classes/EntityDefSvc';
 
@@ -17,29 +17,29 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
     });
     app.get( prefix + '/entities', async ( req: any, res ) => {
         const results = await neo4jSvc.executeCypher('getEntities.cyp', {});
-        const entities: BaseEntity[] = [];
+        const entities: BaseLiteEntity[] = [];
          /*
           * for each entity in the result add a display string
          */
             results[0].entities.forEach(async (e: any, i: any) => {
-            const entity: BaseEntity = new BaseEntity();
+            const entity: BaseLiteEntity = new BaseLiteEntity();
             entity.type = e.type;
             entity.uuid = e.uuid;
             entity.display = await EntityDefSvc.getDisplayString(entity.type, e.props);
-            entity.props = [];
-
-           /**
-            * convert the prop map to a property array.
-            */
-            let key: string;
-            for (key in e.props) {
-                if (!(key === 'uuid' || key === 'type' || key === 'display') ) {
-                    const value: string = e.props[key];
-                    if (value.length > 0) {
-                        entity.props.push({key: key, value: value});
-                    }
-                }
-            }
+//            entity.props = [];
+//
+//           /**
+//            * convert the prop map to a property array.
+//            */
+//            let key: string;
+//            for (key in e.props) {
+//                if (!(key === 'uuid' || key === 'type' || key === 'display') ) {
+//                    const value: string = e.props[key];
+//                    if (value.length > 0) {
+//                        entity.props.push({key: key, value: value});
+//                    }
+//                }
+//            }
             entities.push(entity);
             if (i === results[0].entities.length - 1) {
               res.send( entities );
