@@ -1,9 +1,5 @@
 import * as express from 'express';
 import {Neo4jSvc} from '../classes/Neo4jSvc';
-import {BaseEntity} from '../classes/BaseEntity';
-import {IEntity} from '../classes/IEntity';
-import {IEntityDef} from '../classes/IEntityDef';
-import {EntityDefSvc} from '../classes/EntityDefSvc';
 
 export const register = ( app: express.Application, prefix: string= '/api' ) => {
     const neo4jSvc = Neo4jSvc.getInstance();

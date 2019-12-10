@@ -3,10 +3,7 @@ import parse = require('csv-parse');
 import {Readable} from 'stream';
 import {Neo4jSvc} from '../classes/Neo4jSvc';
 import {BaseEntity} from '../classes/BaseEntity';
-import {IEntity} from '../classes/IEntity';
-import {IEntityDef} from '../classes/IEntityDef';
-import {IProperty} from '../classes/IProperty';
-import {IPropertyGroup} from '../classes/IPropertyGroup';
+import {IEntity, IEntityDef, IProperty, IPropertyGroup} from '../classes/interfaces';
 
 export const register = ( app: express.Application, prefix: string= '/api' ) => {
     const neo4jSvc = Neo4jSvc.getInstance();

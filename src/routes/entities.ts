@@ -1,8 +1,7 @@
 import * as express from 'express';
 import {Neo4jSvc} from '../classes/Neo4jSvc';
 import {BaseEntity} from '../classes/BaseEntity';
-import {IEntity} from '../classes/IEntity';
-import {IEntityDef} from '../classes/IEntityDef';
+import {IEntity, IEntityDef} from '../classes/interfaces';
 import {EntityDefSvc} from '../classes/EntityDefSvc';
 
 export const register = ( app: express.Application, prefix: string= '/api' ) => {
@@ -20,7 +19,7 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
         const results = await neo4jSvc.executeCypher('getEntities.cyp', {});
         const entities: BaseEntity[] = [];
          /*
-          * for each entity in the result determin add a display string
+          * for each entity in the result add a display string
          */
             results[0].entities.forEach(async (e: any, i: any) => {
             const entity: BaseEntity = new BaseEntity();
@@ -29,8 +28,10 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
             entity.display = await EntityDefSvc.getDisplayString(entity.type, e.props);
             entity.props = [];
 
+           /**
+            * convert the prop map to a property array.
+            */
             let key: string;
-
             for (key in e.props) {
                 if (!(key === 'uuid' || key === 'type' || key === 'display') ) {
                     const value: string = e.props[key];

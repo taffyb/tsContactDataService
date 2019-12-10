@@ -1,5 +1,4 @@
-import {IEntityDef} from './IEntityDef';
-import {IEntity} from './IEntity';
+import {IEntityDef, IEntity} from './interfaces';
 import {Neo4jSvc} from './Neo4jSvc';
 
 
