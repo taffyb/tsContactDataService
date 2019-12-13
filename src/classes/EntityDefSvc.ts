@@ -24,6 +24,7 @@ export class EntityDefSvc {
         });
     }
     private static replace(display: string, e: IEntity): string {
+//      console.log(`display string ${display} e:${JSON.stringify(e)}`);
         let d = display;
         const regex = /\b(\w[A-Za-z]*)/g;
         const found = display.match(regex);

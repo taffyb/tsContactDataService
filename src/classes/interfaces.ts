@@ -1,4 +1,5 @@
 export interface IProp {
+    [key: string]: any;
     key: string;
     value: any;
 }
