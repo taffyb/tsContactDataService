@@ -7,6 +7,9 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
         // add a new relationship
         // body= {euuid1,type,euuid2}
     });
+    app.put( prefix + '/relationships/:uuid', async ( req: any, res ) => {
+        // update the relationship properties to those in the body
+    });
     app.delete( prefix + '/relationships/:uuid', async ( req: any, res ) => {
        // remove a relationship by uuid
     });
@@ -15,7 +18,10 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
         const types: string[] = req.query.types;
         if (!types) {
             neo4jSvc.executeCypher('getRelationships.cyp', {})
-            .then(result => { res.send(result[0].links); })
+            .then(result => {
+                const links = result[0].links;
+                res.send(links);
+            })
             .catch(err => {console.log(`GET ${prefix}/relationships ${JSON.stringify(err)}`); res.sendStatus(500); });
         } else {
             neo4jSvc.executeCypher('getRelationshipLabels.cyp', {sourceType: types[0], targetType: types[1]})
@@ -23,11 +29,9 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
             .catch(err => {console.log(`GET ${prefix}/relationships ${JSON.stringify(err)}`); res.sendStatus(500); });
         }
     });
-    app.get( prefix + '/relationships/:uuid/:source/:target', ( req: any, res ) => {
+    app.get( prefix + '/relationships/:uuid', ( req: any, res ) => {
         const uuid: string = req.params.uuid;
-        const source: string = req.params.source;
-        const target: string = req.params.target;
-    neo4jSvc.executeCypher('getRelationship.cyp', {source: source, target: target, uuid: uuid}, true)
+    neo4jSvc.executeCypher('getRelationship.cyp', {uuid: uuid}, true)
     .then(result => { res.send(result[0].label); })
     .catch(err => {console.log(`GET ${prefix}/relationships ${JSON.stringify(err)}`); res.sendStatus(500); });
 
