@@ -9,7 +9,8 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
         res.send(results.relationship);
     });
     app.put( prefix + '/relationships/:uuid', async ( req: any, res ) => {
-        // update the relationship properties to those in the body
+        const results = await neo4jSvc.executeCypher('updateRelationship.cyp', req.body, true);
+        res.send(results.relationship);
     });
     app.delete( prefix + '/relationships/:uuid', async ( req: any, res ) => {
        // remove a relationship by uuid
