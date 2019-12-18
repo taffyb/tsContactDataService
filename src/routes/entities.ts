@@ -49,7 +49,7 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
 
     });
     app.post( prefix + '/entities', async ( req: any, res ) => {
-        const results = await neo4jSvc.executeCypher('addEntity.cyp', req.body, true);
+        const results = await neo4jSvc.executeCypher('addEntity.cyp', req.body);
         const e = results[0].entity;
         const entity: IEntity = new BaseEntity();
         entity.type = e.type;

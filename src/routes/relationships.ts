@@ -4,8 +4,9 @@ import {Neo4jSvc} from '../classes/Neo4jSvc';
 export const register = ( app: express.Application, prefix: string= '/api' ) => {
     const neo4jSvc = Neo4jSvc.getInstance();
     app.post( prefix + '/relationships', async ( req: any, res ) => {
-        // add a new relationship
-        // body= {euuid1,type,euuid2}
+        const results = await neo4jSvc.executeCypher('addRelationship.cyp', req.body, true);
+
+        res.send(results.relationship);
     });
     app.put( prefix + '/relationships/:uuid', async ( req: any, res ) => {
         // update the relationship properties to those in the body
@@ -31,9 +32,9 @@ export const register = ( app: express.Application, prefix: string= '/api' ) => 
     });
     app.get( prefix + '/relationships/:uuid', ( req: any, res ) => {
         const uuid: string = req.params.uuid;
-    neo4jSvc.executeCypher('getRelationship.cyp', {uuid: uuid}, true)
-    .then(result => { res.send(result[0].label); })
-    .catch(err => {console.log(`GET ${prefix}/relationships ${JSON.stringify(err)}`); res.sendStatus(500); });
+        neo4jSvc.executeCypher('getRelationship.cyp', {uuid: uuid}, true)
+        .then(result => { res.send(result[0].label); })
+        .catch(err => {console.log(`GET ${prefix}/relationships ${JSON.stringify(err)}`); res.sendStatus(500); });
 
     });
 };

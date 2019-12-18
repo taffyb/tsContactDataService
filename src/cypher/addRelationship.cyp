@@ -1,6 +1,6 @@
-//{euuid1,euuid2,type}
-MATCH (e1:Entity{uuid:$euuid1})
-MATCH (e2:Entity{uuid:$euuid2})
-WITH e1,e2, apoc.create.uuid() as ruuid
-CALL apoc.create.relationship(e1,$type,{uuid:ruuid}, e2) YIELD rel
-RETURN ruuid as uuid
+//{source,target,label}
+MATCH (s:Entity{uuid:$source})
+MATCH (t:Entity{uuid:$target})
+CREATE (s)-[:FROM]->(r:Relationship)-[:TO]->(t)
+SET r.type=$label,r.uuid=apoc.create.uuid()
+RETURN {uuid:r.uuid,source:s.uuid,target:t.uuid,label:r.type,left:false,right:true} as relationship
